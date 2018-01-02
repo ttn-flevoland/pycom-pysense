@@ -13,7 +13,10 @@ from lib.LTR329ALS01 import LTR329ALS01
 from lib.SI7006A20 import SI7006A20
 from lib.LIS2HH12 import LIS2HH12
 
+# Disable the heartbeat LED
 pycom.heartbeat(False)
+
+# Make the LED light up in black
 pycom.rgbled(0x000000)
 
 # Initialize LoRa in LORAWAN mode.
@@ -25,17 +28,17 @@ dev_eui = binascii.hexlify(lora.mac()).upper().decode('utf-8')
 # Join a network using OTAA (Over the Air Activation)
 lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
 
-# wait until the module has joined the network
+# Wait until the module has joined the network
 count = 0
 while not lora.has_joined():
-    pycom.rgbled(0xffa500)
+    pycom.rgbled(0xffa500) # Make the LED light up in orange
     time.sleep(0.2)
-    pycom.rgbled(0x000000)
+    pycom.rgbled(0x000000) # Make the LED light up in black
     time.sleep(2)
-    print("Not yet joined count is:" ,  count)
+    print("retry join count is:" ,  count)
     count = count + 1
 
-# Show that LoRa OTAA has been succesfull
+# Show that LoRa OTAA has been succesfull by blinking blue
 pycom.rgbled(0x0000ff)
 time.sleep(0.5)
 pycom.rgbled(0x000000)
@@ -48,7 +51,7 @@ pycom.rgbled(0x000000)
 s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 # Set the LoRaWAN data rate
 s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
-# make the socket non-blocking
+# Make the socket non-blocking
 s.setblocking(False)
 
 # Init the libraries
@@ -59,8 +62,6 @@ si7006a20 = SI7006A20() # Humidity and Temperature sensor
 lis2hh12 = LIS2HH12() # 3-Axis Accelerometer
 
 while True:
-
-    print(int(ltr329als01.light()[0] * 100))
 
     clean_bytes = struct.pack(">iiiiiii",
         int(mpl3115a2.temperature() * 100), # Temperature in celcius
@@ -75,9 +76,10 @@ while True:
     s.send(clean_bytes)
     # print(struct.unpack(">iiiiiii", clean_bytes))
 
-    pycom.rgbled(0x007f00)
+    pycom.rgbled(0x007f00) # Make the LED light up in green
     time.sleep(0.2)
     pycom.rgbled(0x000000)
     time.sleep(2.8)
 
-    time.sleep(300)
+    # Wait for 60 seconds before moving to the next iteration
+    time.sleep(60)
