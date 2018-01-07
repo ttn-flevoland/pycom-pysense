@@ -1,6 +1,5 @@
 from settings import app_eui, app_key
 from network import LoRa
-from pysense import Pysense
 
 import socket
 import time
@@ -8,6 +7,7 @@ import pycom
 import struct
 import binascii
 
+from pysense import Pysense
 from lib.MPL3115A2 import MPL3115A2
 from lib.LTR329ALS01 import LTR329ALS01
 from lib.SI7006A20 import SI7006A20
@@ -38,6 +38,8 @@ while not lora.has_joined():
     print("retry join count is:" ,  count)
     count = count + 1
 
+print("join procedure succesfull")
+
 # Show that LoRa OTAA has been succesfull by blinking blue
 pycom.rgbled(0x0000ff)
 time.sleep(0.5)
@@ -63,18 +65,29 @@ lis2hh12 = LIS2HH12() # 3-Axis Accelerometer
 
 while True:
 
+    # Read the values from the sensors
+    voltage = pysense.read_battery_voltage()
+    temperature = mpl3115a2.temperature()
+    pressure = mpl3115a2.pressure()
+    light = ltr329als01.light()[0]
+    humidity = si7006a20.humidity()
+    roll = lis2hh12.roll()
+    pitch = lis2hh12.pitch()
+
+    # Debug sensor values
+    print('voltage:{}, temperature:{}, pressure:{}, light:{}, humidity:{}, roll:{}, pitch:{}'.format(voltage, temperature, pressure, light, humidity, roll, pitch))
+
     clean_bytes = struct.pack(">iiiiiii",
-        int(mpl3115a2.temperature() * 100), # Temperature in celcius
-        int(mpl3115a2.pressure() * 100), # Atmospheric pressure in bar
-        int(ltr329als01.light()[0] * 100), # Light in lux
-        int(si7006a20.humidity() * 100), # Humidity in percentages
-        int(lis2hh12.roll() * 100), # Roll in degrees in the range -180 to 180
-        int(lis2hh12.pitch() * 100), # Pitch in degrees in the range -90 to 90
-        int(pysense.read_battery_voltage() * 100)) # Battery voltage
+        int(temperature * 100), # Temperature in celcius
+        int(pressure * 100), # Atmospheric pressure in bar
+        int(light * 100), # Light in lux
+        int(humidity * 100), # Humidity in percentages
+        int(roll * 100), # Roll in degrees in the range -180 to 180
+        int(pitch * 100), # Pitch in degrees in the range -90 to 90
+        int(voltage * 100)) # Battery voltage
 
     # send the data over LPWAN network
     s.send(clean_bytes)
-    # print(struct.unpack(">iiiiiii", clean_bytes))
 
     pycom.rgbled(0x007f00) # Make the LED light up in green
     time.sleep(0.2)

@@ -44,13 +44,16 @@ Over-the-Air Activation (OTAA) is the preferred and most secure way to connect w
 
 ABP: Activation By Personalization
 Activation by Personalization (ABP)
-In some cases you might need to hardcode the DevAddr as well as the security keys in the device. This means activating a device by personalization (ABP). This strategy might seem simpler, because you skip the join procedure, but it has some downsides related to security.
+In some cases you might need to hardcode the DevAddr as well as the security keys in the device. This means activating a device by personalisation (ABP). This strategy might seem simpler, because you skip the join procedure, but it has some downsides related to security.
 
 ## Pycom
 https://www.gitbook.com/book/pycom/pycom-documentation/details
 
 ### Boot modes
-https://docs.pycom.io/chapter/toolsandfeatures/bootmodes.html
+An error occurred: Not enough memory available on the board.
+Upload failed. Please reboot your device manually.
+
+import os
 
 ### Flash firmware
 If you need to update the firmware go to:
@@ -110,9 +113,23 @@ Signed 16 bit integer
 
 
 
+## API
+https://ttn-flevoland-pysense.data.thethingsnetwork.org
+
+
+
+
+
+
 ## Links
 
 https://www.thethingsnetwork.org/forum/t/what-is-the-difference-between-otaa-and-abp-devices/2723
+https://www.thethingsnetwork.org/docs/devices/bytes.html
+
+
+https://docs.python.org/2/library/struct.html
+
+
 
 
 https://blog.dbrgn.ch/2017/6/23/lorawan-data-rates/
