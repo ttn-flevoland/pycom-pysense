@@ -32,10 +32,10 @@ https://console.thethingsnetwork.org/applications/ttn-flevoland-pysense/devices/
 ##### Retrieve the DeviceEUI
 For OTAA you can retrieve the dev_eui from the LoRa chip with the following commands:
 ```python
-import binascii
-from network import LoRa
-dev_eui = binascii.hexlify(lora.mac()).upper().decode('utf-8')
-print(dev_eui)
+>>> import binascii
+>>> from network import LoRa
+>>> dev_eui = binascii.hexlify(lora.mac()).upper().decode('utf-8')
+>>> print(dev_eui)
 ```
 
 ### Security
@@ -78,7 +78,11 @@ If the following error occurs:
 An error occurred: Not enough memory available on the board.
 Upload failed. Please reboot your device manually.
 ```
-use the Factory Reset the Filesystem
+Factory Reset the Filesystem by
+```
+>>> import os
+>>> os.mkfs('/flash')
+```
 
 
 ## Connecting your device
